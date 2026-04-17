@@ -1307,18 +1307,27 @@ with tab4:
             return "background-color:rgba(63,185,80,0.15);color:#3FB950;font-weight:600"
         return ""
 
+    # column styling function (SAFE for pandas 2.x)
+    def highlight_risk_column(col):
+        if col.name == "Risk_Category":
+            return col.map(style_risk)
+        return col
+
     styled = (
         display_df.style
-          .applymap(style_risk, subset=["Risk_Category"])
-          .background_gradient(
-              subset=["Late_Delivery_Probability"],
-              cmap="RdYlGn_r", vmin=0, vmax=1,
-          )
-          .format({
-              "Late_Delivery_Probability": "{:.3f}",
-              "Order Item Total": "${:,.2f}" if "Order Item Total" in display_cols else "{}",
-          })
+            .apply(highlight_risk_column)
+            .background_gradient(
+                subset=["Late_Delivery_Probability"],
+                cmap="RdYlGn_r",
+                vmin=0,
+                vmax=1,
+            )
+            .format({
+                "Late_Delivery_Probability": "{:.3f}",
+                "Order Item Total": "${:,.2f}" if "Order Item Total" in display_cols else "{}",
+            })
     )
+
     st.dataframe(styled, use_container_width=True, height=460)
 
     # ── Priority actions chart ───────────────────────────────────
