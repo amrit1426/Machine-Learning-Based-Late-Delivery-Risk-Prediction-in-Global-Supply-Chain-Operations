@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.env
+venv/
+venv3/
+.env/
+.DS_Store
+
+# ignore large ML artifacts if needed later
+*.pkl
+*.joblib
