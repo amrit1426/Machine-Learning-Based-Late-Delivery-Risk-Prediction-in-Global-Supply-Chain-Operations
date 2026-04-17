@@ -1,7 +1,7 @@
 # ================================================================
 #  APL LOGISTICS — DELIVERY RISK INTELLIGENCE DASHBOARD
 # ================================================================
-
+import sys
 import warnings
 import joblib
 import numpy as np
@@ -12,7 +12,13 @@ from plotly.subplots import make_subplots
 import streamlit as st
 import base64
 import os
-from encoders import SmoothedTargetEncoder
+
+import encoders
+import data_processing
+
+# FORCE pickle compatibility (VERY IMPORTANT)
+sys.modules["encoders"] = encoders
+sys.modules["data_processing"] = data_processing
 
 warnings.filterwarnings("ignore")
 
@@ -290,13 +296,20 @@ def load_data() -> pd.DataFrame:
 @st.cache_resource
 def load_artifacts():
     try:
-        model    = joblib.load("models/risk_model.pkl")
-        encoder  = joblib.load("models/target_encoder.pkl")
-        stats    = joblib.load("models/train_stats.pkl")
-        quantiles= joblib.load("models/value_quantiles.pkl")
-        ohe_cols = pd.read_csv("data/ohe_columns.csv",
-                               header=None)[0].tolist()
+        base_dir = os.path.dirname(__file__)
+
+        model = joblib.load(os.path.join(base_dir, "models/risk_model.pkl"))
+        encoder = joblib.load(os.path.join(base_dir, "models/target_encoder.pkl"))
+        stats = joblib.load(os.path.join(base_dir, "models/train_stats.pkl"))
+        quantiles = joblib.load(os.path.join(base_dir, "models/value_quantiles.pkl"))
+
+        ohe_cols = pd.read_csv(
+            os.path.join(base_dir, "data/ohe_columns.csv"),
+            header=None
+        )[0].tolist()
+
         return model, encoder, stats, quantiles, ohe_cols
+
     except FileNotFoundError:
         return None, None, None, None, None
 
