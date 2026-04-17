@@ -1,0 +1,24 @@
+# ================================================================
+#  Git Large File Storage (LFS) configuration
+#
+#  risk_model.pkl is 70 MB+. GitHub's hard limit is 100 MB per file
+#  and shows warnings at 50 MB. Git LFS stores the file content in
+#  LFS storage and keeps only a lightweight pointer in the repo.
+#
+#  Streamlit Cloud supports LFS repos natively.
+#
+#  Setup (run once, locally):
+#    git lfs install
+#    git add .gitattributes
+#    git commit -m "chore: add LFS tracking for model artifacts"
+#    git lfs track "*.pkl"           # if not already done
+#    git add models/risk_model.pkl   # re-add after LFS tracking
+#    git commit -m "chore: migrate model pkl to LFS"
+#    git push
+# ================================================================
+# Track all serialised model artifacts with LFS
+*.pkl filter=lfs diff=lfs merge=lfs -text
+# Track large scored-orders dataset if it exceeds 50 MB
+# (comment out the next line if your CSV is under 50 MB)
+data/all_orders_scored.csv filter=lfs diff=lfs merge=lfs -text
+data/scored_test_data.csv  filter=lfs diff=lfs merge=lfs -text
