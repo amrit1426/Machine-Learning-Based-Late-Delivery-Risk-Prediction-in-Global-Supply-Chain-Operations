@@ -1,8 +1,42 @@
-streamlit
-pandas
-numpy
-scikit-learn
-xgboost
-joblib
-plotly
-seaborn
+# ================================================================
+#  APL LOGISTICS — DELIVERY RISK INTELLIGENCE DASHBOARD
+#  requirements.txt — Streamlit Cloud deployment
+# ================================================================
+#
+#  IMPORTANT — VERSION COMPATIBILITY:
+#  scikit-learn and xgboost pickles are sensitive to version
+#  mismatches. If model loading fails on Streamlit Cloud with a
+#  VersionWarning or AttributeError, pin these to the exact
+#  versions you used locally:
+#
+#    Run on your local machine:
+#      pip show scikit-learn xgboost imbalanced-learn joblib
+#
+#    Then replace the >= constraints below with == constraints.
+#  ================================================================
+
+# ── Streamlit ──────────────────────────────────────────────────
+streamlit>=1.28.0
+
+# ── Data / numerics ────────────────────────────────────────────
+pandas>=1.5.3
+numpy>=1.23.5
+
+# ── ML core ────────────────────────────────────────────────────
+# scikit-learn 1.0+ is required for feature_names_in_ attribute
+# used in app.py for column alignment during inference.
+scikit-learn>=1.3.0
+
+# xgboost — must match training version for pickle compatibility
+xgboost>=1.7.6
+
+# imbalanced-learn — ImbPipeline is stored inside risk_model.pkl
+imbalanced-learn>=0.11.0
+
+# joblib — model deserialisation
+joblib>=1.3.0
+
+# ── Visualisation ───────────────────────────────────────────────
+plotly>=5.15.0
+matplotlib>=3.6.0
+seaborn>=0.12.0

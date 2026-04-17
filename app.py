@@ -16,9 +16,17 @@ import os
 import encoders
 import data_processing
 
-# FORCE pickle compatibility (VERY IMPORTANT)
+# ── Deployment: register modules BEFORE any joblib.load call ──────
+# joblib/pickle resolves class references via sys.modules at
+# deserialisation time. Registering here ensures SmoothedTargetEncoder
+# is found regardless of how the artifact was originally pickled.
 sys.modules["encoders"] = encoders
 sys.modules["data_processing"] = data_processing
+
+# ── Absolute base directory (robust on Streamlit Cloud) ──────────
+# __file__ is always the app.py path; using it avoids any ambiguity
+# about the working directory set by the Streamlit Cloud runner.
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 warnings.filterwarnings("ignore")
 
@@ -264,7 +272,7 @@ def apply_dark_layout(fig, height=420, legend=True):
 @st.cache_data
 def load_data() -> pd.DataFrame:
     try:
-        df = pd.read_csv("data/all_orders_scored.csv")
+        df = pd.read_csv(os.path.join(BASE_DIR, "data", "all_orders_scored.csv"))
         df["Risk_Category"] = pd.Categorical(
             df["Risk_Category"], categories=["Low", "Medium", "High"], ordered=True
         )
@@ -275,7 +283,7 @@ def load_data() -> pd.DataFrame:
     except FileNotFoundError:
         # Graceful fallback to test-only file if full scored file not yet generated
         try:
-            df = pd.read_csv("data/scored_test_data.csv")
+            df = pd.read_csv(os.path.join(BASE_DIR, "data", "scored_test_data.csv"))
             df["Risk_Category"] = pd.Categorical(
                 df["Risk_Category"], categories=["Low", "Medium", "High"], ordered=True
             )

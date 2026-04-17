@@ -1,11 +1,38 @@
+# ================================================================
+#  .gitignore — APL Logistics Risk Dashboard
+# ================================================================
+
+# ── Raw training data (large CSV, not needed for deployment) ──
+APL_Logistics.csv
+
+# ── Python cache ───────────────────────────────────────────────
 __pycache__/
 *.pyc
-.env
-venv/
-venv3/
-.env/
-.DS_Store
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
 
-# ignore large ML artifacts if needed later
-*.pkl
-*.joblib
+# ── Virtual environments ────────────────────────────────────────
+.venv/
+venv/
+env/
+.env
+
+# ── Generated training plots (re-created by data_processing.py)
+plots/
+
+# ── Jupyter notebooks (not part of deployment) ─────────────────
+*.ipynb
+.ipynb_checkpoints/
+
+# ── OS files ───────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── IDE ────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
